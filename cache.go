@@ -57,12 +57,20 @@ func Initialise(v bool, o *Options) error {
 			err = nil
 		}
 		if o.WorkingFolder != "" {
+			if err = os.MkdirAll(o.WorkingFolder, os.ModePerm); err != nil {
+				fmt.Println(err)
+				os.Exit(0)
+			}
 			options.WorkingFolder = o.WorkingFolder
 			if options.WorkingFolder != "" && options.WorkingFolder[len(options.WorkingFolder)-1] != '/' {
 				options.WorkingFolder += "/"
 			}
 		}
 		if o.RecoveryFolder != "" {
+			if err = os.MkdirAll(o.RecoveryFolder, os.ModePerm); err != nil {
+				fmt.Println(err)
+				os.Exit(0)
+			}
 			options.RecoveryFolder = o.RecoveryFolder
 			if options.RecoveryFolder != "" && options.RecoveryFolder[len(options.RecoveryFolder)-1] != '/' {
 				options.RecoveryFolder += "/"
