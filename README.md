@@ -4,7 +4,13 @@ jac is a persistent in-memory key:value/store cache based on go-cache that is ba
 jac is suitable for application running on a single machine that need persistence and resistance towards system or application crashes. It achieved this by duplicating the data itself on the disk in a readable manner (optional) during execution and as a standard GOB once the application has closed. In this way it is possible to load a the latest cache state after an application restart or a system crash.  
 jac generates two files either during operation (.data) or for shutdown back-up (.rec). The former is a JSON text file that is sued to reload the state in case of sudden system or application death. It can also be used to preload values into the cache.  The latter are GOB save files generated when the cache is properly closed and are the rpeferred mode to load the cache at application (re)start.  
 
-jac has been compiled and tested under linux for mipsle, arm, arm64 and amd64 and under windows for amd64  
+jac has been compiled and tested for the following pairs:  
+
+ - linux/arm  
+ - linux/arm64  
+ - linux/amd64  
+ - openWRT/mipsle 
+ - windows/amd64  
 
 ### Installation
 
