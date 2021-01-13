@@ -8,6 +8,12 @@ import (
 
 // external data types
 
+// Default options are
+//	ExpirationTime:     0,
+//	IntervalCompacting: 1440 * 60,
+//	InternalBuffering:  10,
+//	LoadDelayMs:        10,
+//	MaximumAge:         5 * 60,
 type Options struct {
 	ExpirationTime     int    // Expiration time is seconds
 	IntervalCompacting int    // Cache working files compacting interval in seconds (values smaller than 60s will be defaulted to 60s)
