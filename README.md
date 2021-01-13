@@ -81,7 +81,7 @@ func main() {
     //  they will be loaded in the cache
     func NewBucket(name string, exp time.Duration) (c Bucket, e error) 
     
-    // Close closes a bucketInternal storing values in the recovery data
+    // Close closes a bucket storing values in the recovery data
     //  if keep is false the working data file will be deleted
     func (c *Bucket) Close(keep bool) 
     
