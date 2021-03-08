@@ -12,6 +12,8 @@ jac has been compiled and tested for the following pairs:
  - openWRT/mipsle 
  - windows/amd64  
 
+jac is built to accept data of any type, however the data will be always stored as a string and, to be type agnostic, will be also returned as a string.  
+
 ### Installation
 
 `go get github.com/fpessolano/jac`
@@ -40,10 +42,10 @@ func main() {
     }
 
     // Set a persistent value of the key "one" to "1", with the default expiration time
-    test.Set("one", "1", cache.DefaultExpiration, true)
+    test.Set("one", 1, cache.DefaultExpiration, true)
     
     // Set a non-persistent value of the key "b" to "2", with no expiration time
-    test.Set("two", "2", cache.NoExpiration, false)
+    test.Set("two", "two", cache.NoExpiration, false)
     
     // Get the value associated with the key "one" from the cache
     oneRead, found := test.Get("one")
@@ -95,20 +97,20 @@ func main() {
     
     // Set writes a new key/value pair with a given expiration time t and
     //  It marks the key/value pair persistent if pers is true.
-    func (c *Bucket) Set(k, v string, t time.Duration, pers bool) 
+    func (c *Bucket) Set(k string, vn interface{}, t time.Duration, pers bool) 
     
     // Update updates the key/value pair with a given expiration time t and
     //  It marks the key/value pair persistent if pers is true. The working file is not changed
     //  even if pers is true
-    func (c *Bucket) Update(k, v string, t time.Duration, pers bool) 
+    func (c *Bucket) Update(k string, vn interface{}, t time.Duration, pers bool) 
     
     // Replace replaces an existing key/value pair only it already existing.
     //  It marks the key/value pair persistent if pers is true.
-    func (c *Bucket) Replace(k, v string, t time.Duration, pers bool) 
+    func (c *Bucket) Replace(k string, vn interface{}, t time.Duration, pers bool) 
     
     // Add add a new key/value pair only if it does not already
     //  It marks the key/value pair persistent if pers is true.
-    func (c *Bucket) Add(k, v string, t time.Duration, pers bool) (string, bool) 
+    func (c *Bucket) Add(k string, vn interface{}, t time.Duration, pers bool) (string, bool) 
     
     // FunctionUpdate updates the new key/value with a custom function of type
     //  func(k, v string) (string, string). The function is given the actual key/value pair is present
@@ -145,6 +147,5 @@ func main() {
 
 ### Next steps
 
- - Generalise to more than just strings  
  - Add autoincrement/decrement functions  
  - Permanent persistence flag for individual items  

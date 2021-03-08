@@ -147,7 +147,7 @@ func NewBucket(name string, exp time.Duration) (c Bucket, e error) {
 	return
 }
 
-// Close closes a bucketInternal storing values in the recovery data
+// Close closes a bucket storing values in the recovery data
 //  if keep is false the working data file will be deleted
 func (c *Bucket) Close(keep bool) {
 	if f, err := os.Create(options.RecoveryFolder + c.name + ".rec"); err == nil {
@@ -170,7 +170,7 @@ func (c *Bucket) Close(keep bool) {
 	go func() { c.cr <- nil }()
 }
 
-// Get read the value associated to the key k/
+// Get read the value associated to the key k
 //  It also returns false if the key has not value associated to it
 func (c *Bucket) Get(k string) (string, bool) {
 	c.bucket.mu.RLock()
@@ -219,10 +219,11 @@ func (c *Bucket) GetWithExpiration(k string) (string, time.Time, bool) {
 
 // Set writes a new key/value pair with a given expiration time t and
 //  It marks the key/value pair persistent if pers is true.
-func (c *Bucket) Set(k, v string, t time.Duration, pers bool) {
-	if k == "" || v == "" {
+func (c *Bucket) Set(k string, vn interface{}, t time.Duration, pers bool) {
+	if k == "" || vn == nil {
 		return
 	}
+	v := anything2String(vn)
 	if c.writer != nil && pers {
 		select {
 		case c.writer <- backupData{
@@ -251,11 +252,12 @@ func (c *Bucket) Set(k, v string, t time.Duration, pers bool) {
 // Update updates the key/value pair with a given expiration time t and
 //  It marks the key/value pair persistent if pers is true. The working file is not changed
 //  even if pers is true
-func (c *Bucket) Update(k, v string, t time.Duration, pers bool) {
+func (c *Bucket) Update(k string, vn interface{}, t time.Duration, pers bool) {
 	c.bucket.mu.Lock()
-	if k == "" || v == "" {
+	if k == "" || vn == nil {
 		return
 	}
+	v := anything2String(vn)
 	if _, found := c.bucket.get(k); found {
 		c.bucket.set(k, v, t)
 	} else {
@@ -266,11 +268,12 @@ func (c *Bucket) Update(k, v string, t time.Duration, pers bool) {
 
 // Replace replaces an existing key/value pair only it already existing.
 //  It marks the key/value pair persistent if pers is true.
-func (c *Bucket) Replace(k, v string, t time.Duration, pers bool) {
+func (c *Bucket) Replace(k string, vn interface{}, t time.Duration, pers bool) {
 	c.bucket.mu.Lock()
-	if k == "" || v == "" {
+	if k == "" || vn == nil {
 		return
 	}
+	v := anything2String(vn)
 	if _, found := c.bucket.get(k); found {
 		c.set(k, v, t, pers)
 	}
@@ -279,12 +282,13 @@ func (c *Bucket) Replace(k, v string, t time.Duration, pers bool) {
 
 // Add add a new key/value pair only if it does not already
 //  It marks the key/value pair persistent if pers is true.
-func (c *Bucket) Add(k, v string, t time.Duration, pers bool) (string, bool) {
+func (c *Bucket) Add(k string, vn interface{}, t time.Duration, pers bool) (string, bool) {
 	c.bucket.mu.Lock()
 	defer c.bucket.mu.Unlock()
-	if k == "" || v == "" {
+	if k == "" || vn == nil {
 		return "", false
 	}
+	v := anything2String(vn)
 	if val, found := c.bucket.get(k); found && val != "" {
 		return fmt.Sprintf("%v", val), true
 	} else {
