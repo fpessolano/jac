@@ -145,7 +145,3 @@ func main() {
     func (c *Bucket) DeleteExpired() 
 ```
 
-### Next steps
-
- - Add autoincrement/decrement functions  
- - Permanent persistence flag for individual items  
